@@ -5,7 +5,7 @@ terraform {
     hostname     = "app.terraform.io"
 
     workspaces {
-      name = "azure-virtual-machine-module"
+      name = "azure-linux-virtual-machine-module"
     }
   }
 
