@@ -106,6 +106,44 @@ module "azure_virtual_machine" {
   }
 }
 
+module "azure_security_group" {
+  source                       = "./modules/azure/security_group"
+  azure_region                 = var.azure_region
+  azure_resource_group_name    = module.azure_resource_group.resource_group["name"]
+  azure_security_group_name    = format("%s-spoke-a-sg-%s", var.project_prefix, var.project_suffix)
+  azurerm_network_interface_id = element(module.azure_virtual_machine.virtual_machine ["network_interface_ids"], 0)
+  azure_linux_security_rules   = [
+    {
+      name                       = "SSH"
+      priority                   = 1001
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "Tcp"
+      source_port_range          = "*"
+      destination_port_range     = "22"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    },
+    {
+      name                       = "OUTBOUND_ALL"
+      priority                   = 1002
+      direction                  = "Outbound"
+      access                     = "Allow"
+      protocol                   = "*"
+      source_port_range          = "*"
+      destination_port_range     = "*"
+      source_address_prefix      = "*"
+      destination_address_prefix = "*"
+    }
+  ]
+  custom_tags = {
+    "Owner" = var.owner_tag
+  }
+  providers = {
+    azurerm = azurerm.eastus
+  }
+}
+
 output "azure_virtual_machine" {
   value = module.azure_virtual_machine.virtual_machine
 }
