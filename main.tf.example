@@ -96,7 +96,6 @@ module "azure_virtual_machine" {
   azure_zone                   = element(var.azure_zones, 0)
   azure_zones                  = var.azure_zones
   azure_region                 = var.azure_region
-  azure_vnet_subnet_id         = module.azure_subnet.subnet["id"]
   azure_resource_group_name    = module.azure_resource_group.resource_group["name"]
   azure_virtual_machine_name   = format("%s-azure-vm-%s", var.project_prefix, var.project_suffix)
   public_ssh_key               = file(var.ssh_public_key_file)
