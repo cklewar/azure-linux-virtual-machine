@@ -99,7 +99,6 @@ module "azure_virtual_machine" {
   azure_vnet_subnet_id         = module.azure_subnet.subnet["id"]
   azure_resource_group_name    = module.azure_resource_group.resource_group["name"]
   azure_virtual_machine_name   = format("%s-azure-vm-%s", var.project_prefix, var.project_suffix)
-  azure_network_interface_name = format("%s-azure-vm-interface-%s", var.project_prefix, var.project_suffix)
   public_ssh_key               = file(var.ssh_public_key_file)
   providers                    = {
     azurerm = azurerm.eastus
@@ -107,6 +106,17 @@ module "azure_virtual_machine" {
   custom_tags = {
     "Owner" = var.owner_tag
   }
+  azure_network_interfaces = [
+    {
+      name             = format("%s-azure-vm-interface-%s", var.project_prefix, var.project_suffix)
+      tags             = { "tagA" : "tagValueA" }
+      ip_configuration = {
+        subnet_id                     = module.azure_subnet.subnet["id"]
+        create_public_ip_address      = true
+        private_ip_address_allocation = "Dynamic"
+      }
+    }
+  ]
 }
 
 module "azure_security_group" {
